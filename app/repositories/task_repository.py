@@ -5,17 +5,27 @@ from app.schemas.task import TaskCreate, TaskUpdate
 
 
 class TaskRepository:
-    def create(self, db: Session, data: TaskCreate) -> Task:
-        task = Task(**data.model_dump())
+    def create(self, db: Session, data: TaskCreate, user_id: int) -> Task:
+        task = Task(**data.model_dump(), user_id=user_id)
         db.add(task)
         db.flush()
         return task
 
-    def get_all(self, db: Session, skip: int, limit: int) -> list[Task]:
-        return db.query(Task).offset(skip).limit(limit).all()
+    def get_all(self, db: Session, user_id: int, skip: int, limit: int) -> list[Task]:
+        return (
+            db.query(Task)
+            .filter(Task.user_id == user_id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
 
-    def get_by_id(self, db: Session, task_id: int) -> Task | None:
-        return db.query(Task).filter(Task.id == task_id).first()
+    def get_by_id(self, db: Session, task_id: int, user_id: int) -> Task | None:
+        return (
+            db.query(Task)
+            .filter(Task.id == task_id, Task.user_id == user_id)
+            .first()
+        )
 
     def update(self, db: Session, task: Task, data: TaskUpdate) -> Task:
         for field, value in data.model_dump(exclude_unset=True).items():

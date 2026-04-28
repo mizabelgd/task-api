@@ -23,6 +23,7 @@ class TaskUpdate(BaseModel):
 
 class TaskResponse(TaskBase):
     id: int
+    user_id: int
     created_at: datetime
     updated_at: datetime
 
