@@ -14,7 +14,7 @@ Fornecer uma API simples e extensível para criação, leitura, atualização e 
 | Framework | FastAPI |
 | Validação | Pydantic v2 |
 | Banco de dados | PostgreSQL |
-| ORM | SQLAlchemy + asyncpg |
+| ORM | SQLAlchemy + psycopg2 |
 | Servidor | Uvicorn |
 | Gerenciador de pacotes | uv |
 | Testes | Pytest + HTTPX |
@@ -32,7 +32,7 @@ TaskController  — recebe requisições e delega ao service
 TaskService     — implementa a lógica de negócio
   │
 TaskRepository  — gerencia queries SQL contra o PostgreSQL
-  │  SQL (asyncpg / SQLAlchemy)
+  │  SQL (psycopg2 / SQLAlchemy)
   ▼
 PostgreSQL
 ```
@@ -41,7 +41,7 @@ Diagrama de componentes completo: [docs/architecture.md](docs/architecture.md).
 
 ## Como rodar localmente
 
-**Pré-requisitos:** Python 3.13+ e [uv](https://docs.astral.sh/uv/) instalados.
+**Pré-requisitos:** Python 3.13+, [uv](https://docs.astral.sh/uv/) e PostgreSQL instalados.
 
 ```bash
 # 1. Clone o repositório
@@ -56,7 +56,11 @@ source .venv/bin/activate  # Linux/macOS
 # 3. Instale as dependências
 uv sync
 
-# 4. Rode a API
+# 4. Configure as variáveis de ambiente
+cp .env.example .env
+# Edite .env com suas credenciais do PostgreSQL
+
+# 5. Rode a API (as tabelas são criadas automaticamente no startup)
 uvicorn app.main:app --reload
 ```
 
@@ -68,11 +72,11 @@ Documentação interativa: `http://localhost:8000/docs`.
 | Método | Rota | Descrição |
 |---|---|---|
 | GET | `/health` | Verifica status da API |
-| GET | `/tasks` | Lista todas as tarefas |
-| POST | `/tasks` | Cria uma nova tarefa |
-| GET | `/tasks/{id}` | Retorna uma tarefa pelo ID |
-| PUT | `/tasks/{id}` | Atualiza uma tarefa |
-| DELETE | `/tasks/{id}` | Remove uma tarefa |
+| GET | `/api/v1/tasks` | Lista todas as tarefas |
+| POST | `/api/v1/tasks` | Cria uma nova tarefa |
+| GET | `/api/v1/tasks/{id}` | Retorna uma tarefa pelo ID |
+| PATCH | `/api/v1/tasks/{id}` | Atualiza parcialmente uma tarefa |
+| DELETE | `/api/v1/tasks/{id}` | Remove uma tarefa |
 
 ## Roadmap
 
@@ -80,28 +84,29 @@ Documentação interativa: `http://localhost:8000/docs`.
 - [x] Estrutura base do projeto com FastAPI
 - [x] Endpoint `GET /health`
 - [x] Diagrama de componentes (docs/architecture.md)
-- [ ] Estrutura de camadas
-  - [ ] `app/api/` — routers (controllers)
-  - [ ] `app/services/` — lógica de negócio
-  - [ ] `app/repositories/` — acesso ao banco
-  - [ ] `app/models/` — modelos SQLAlchemy
-  - [ ] `app/schemas/` — schemas Pydantic
-- [ ] Integração com PostgreSQL via SQLAlchemy + asyncpg
-- [ ] Migrações com Alembic
-- [ ] CRUD completo de tarefas (`/tasks`)
-  - [ ] `POST /tasks` — criar tarefa
-  - [ ] `GET /tasks` — listar tarefas
-  - [ ] `GET /tasks/{id}` — buscar por ID
-  - [ ] `PUT /tasks/{id}` — atualizar tarefa
-  - [ ] `DELETE /tasks/{id}` — remover tarefa
-- [ ] Validação de dados com Pydantic
-- [ ] Documentação automática via Swagger UI
+- [x] Estrutura de camadas
+  - [x] `app/api/` — routers (controllers)
+  - [x] `app/services/` — lógica de negócio
+  - [x] `app/repositories/` — acesso ao banco
+  - [x] `app/models/` — modelos SQLAlchemy
+  - [x] `app/schemas/` — schemas Pydantic
+- [x] Integração com PostgreSQL via SQLAlchemy + psycopg2
+- [x] Criação automática de tabelas no startup (`create_all`)
+- [x] CRUD completo de tarefas (`/api/v1/tasks`)
+  - [x] `POST /api/v1/tasks` — criar tarefa
+  - [x] `GET /api/v1/tasks` — listar tarefas
+  - [x] `GET /api/v1/tasks/{id}` — buscar por ID
+  - [x] `PATCH /api/v1/tasks/{id}` — atualizar tarefa parcialmente
+  - [x] `DELETE /api/v1/tasks/{id}` — remover tarefa
+- [x] Validação de dados com Pydantic v2
+- [x] Documentação automática via Swagger UI (`/docs`)
 
 ### v0.2.0 — Qualidade
 - [ ] Cobertura de testes com Pytest + HTTPX
 - [ ] CI com GitHub Actions
 - [ ] Tratamento de erros padronizado (RFC 7807)
 - [ ] Paginação na listagem de tarefas
+- [ ] Migrações com Alembic
 
 ### v1.0.0 — Produção
 - [ ] Autenticação com JWT
