@@ -6,6 +6,7 @@ Estilo: Organize por seções com comentários.
 Resposta: Forneça apenas o arquivo .gitignore, nada mais.
 
 # Prompt 2 - README.md
+
 Contexxto: MVP de micro-API RESTful para gestão de tarefas.
 Objetivo: Escrever e criar um README inicial com objetivo, stack, como rodar localmente e roadmap de releases.
 Estilo: Markdown simples, direto e profissional.

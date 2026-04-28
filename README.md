@@ -8,16 +8,16 @@ Fornecer uma API simples e extensível para criação, leitura, atualização e 
 
 ## Stack
 
-| Camada | Tecnologia |
-|---|---|
-| Linguagem | Python 3.13+ |
-| Framework | FastAPI |
-| Validação | Pydantic v2 |
-| Banco de dados | PostgreSQL |
-| ORM | SQLAlchemy + psycopg2 |
-| Servidor | Uvicorn |
-| Gerenciador de pacotes | uv |
-| Testes | Pytest + HTTPX |
+| Camada                 | Tecnologia            |
+| ---------------------- | --------------------- |
+| Linguagem              | Python 3.13+          |
+| Framework              | FastAPI               |
+| Validação              | Pydantic v2           |
+| Banco de dados         | PostgreSQL            |
+| ORM                    | SQLAlchemy + psycopg2 |
+| Servidor               | Uvicorn               |
+| Gerenciador de pacotes | uv                    |
+| Testes                 | Pytest + HTTPX        |
 
 ## Arquitetura
 
@@ -69,18 +69,19 @@ Documentação interativa: `http://localhost:8000/docs`.
 
 ## Endpoints
 
-| Método | Rota | Descrição |
-|---|---|---|
-| GET | `/health` | Verifica status da API |
-| GET | `/api/v1/tasks` | Lista todas as tarefas |
-| POST | `/api/v1/tasks` | Cria uma nova tarefa |
-| GET | `/api/v1/tasks/{id}` | Retorna uma tarefa pelo ID |
-| PATCH | `/api/v1/tasks/{id}` | Atualiza parcialmente uma tarefa |
-| DELETE | `/api/v1/tasks/{id}` | Remove uma tarefa |
+| Método | Rota                 | Descrição                        |
+| ------ | -------------------- | -------------------------------- |
+| GET    | `/health`            | Verifica status da API           |
+| GET    | `/api/v1/tasks`      | Lista todas as tarefas           |
+| POST   | `/api/v1/tasks`      | Cria uma nova tarefa             |
+| GET    | `/api/v1/tasks/{id}` | Retorna uma tarefa pelo ID       |
+| PATCH  | `/api/v1/tasks/{id}` | Atualiza parcialmente uma tarefa |
+| DELETE | `/api/v1/tasks/{id}` | Remove uma tarefa                |
 
 ## Roadmap
 
 ### v0.1.0 — MVP (atual)
+
 - [x] Estrutura base do projeto com FastAPI
 - [x] Endpoint `GET /health`
 - [x] Diagrama de componentes (docs/architecture.md)
@@ -101,14 +102,22 @@ Documentação interativa: `http://localhost:8000/docs`.
 - [x] Validação de dados com Pydantic v2
 - [x] Documentação automática via Swagger UI (`/docs`)
 
-### v0.2.0 — Qualidade
-- [ ] Cobertura de testes com Pytest + HTTPX
-- [ ] CI com GitHub Actions
+### v0.2.0 — Autenticação
+
+- [ ] Autenticação com JWT (registro, login e proteção de rotas)
+- [ ] Associação de tarefas ao usuário autenticado
 - [ ] Tratamento de erros padronizado (RFC 7807)
+
+### v0.3.0 — Qualidade
+
+- [ ] Cobertura de testes com Pytest + HTTPX
+  - [ ] Testes de endpoints CRUD de tarefas
+  - [ ] Testes de registro e login
+  - [ ] Testes de rotas protegidas (com e sem token)
 - [ ] Paginação na listagem de tarefas
-- [ ] Migrações com Alembic
 
 ### v1.0.0 — Produção
-- [ ] Autenticação com JWT
+
 - [ ] Rate limiting
 - [ ] Deploy containerizado com Docker
+- [ ] Criar Makefile
