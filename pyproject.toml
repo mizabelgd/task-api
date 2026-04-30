@@ -1,6 +1,6 @@
 [project]
 name = "task-api"
-version = "0.1.0"
+version = "0.3.0"
 description = "Micro-API RESTful para gestão de tarefas"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -27,3 +27,4 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+filterwarnings = ["ignore::jwt.warnings.InsecureKeyLengthWarning"]

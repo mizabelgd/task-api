@@ -20,6 +20,9 @@ class TaskRepository:
             .all()
         )
 
+    def count_all(self, db: Session, user_id: int) -> int:
+        return db.query(Task).filter(Task.user_id == user_id).count()
+
     def get_by_id(self, db: Session, task_id: int, user_id: int) -> Task | None:
         return (
             db.query(Task)

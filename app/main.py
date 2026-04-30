@@ -20,7 +20,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="task-api", version="0.2.0", lifespan=lifespan)
+app = FastAPI(title="task-api", version="0.3.0", lifespan=lifespan)
 app.include_router(v1_router)
 
 

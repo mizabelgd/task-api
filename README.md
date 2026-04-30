@@ -69,18 +69,33 @@ Documentação interativa: `http://localhost:8000/docs`.
 
 ## Endpoints
 
-| Método | Rota                 | Descrição                        |
-| ------ | -------------------- | -------------------------------- |
-| GET    | `/health`            | Verifica status da API           |
-| GET    | `/api/v1/tasks`      | Lista todas as tarefas           |
-| POST   | `/api/v1/tasks`      | Cria uma nova tarefa             |
-| GET    | `/api/v1/tasks/{id}` | Retorna uma tarefa pelo ID       |
-| PATCH  | `/api/v1/tasks/{id}` | Atualiza parcialmente uma tarefa |
-| DELETE | `/api/v1/tasks/{id}` | Remove uma tarefa                |
+| Método | Rota                   | Auth | Descrição                        |
+| ------ | ---------------------- | ---- | -------------------------------- |
+| GET    | `/health`              | —    | Verifica status da API           |
+| POST   | `/api/v1/auth/register`| —    | Cria conta e retorna JWT         |
+| POST   | `/api/v1/auth/login`   | —    | Autentica e retorna JWT          |
+| GET    | `/api/v1/tasks`        | JWT  | Lista tarefas do usuário         |
+| POST   | `/api/v1/tasks`        | JWT  | Cria uma nova tarefa             |
+| GET    | `/api/v1/tasks/{id}`   | JWT  | Retorna uma tarefa pelo ID       |
+| PATCH  | `/api/v1/tasks/{id}`   | JWT  | Atualiza parcialmente uma tarefa |
+| DELETE | `/api/v1/tasks/{id}`   | JWT  | Remove uma tarefa                |
+
+## Postman
+
+A collection está em [docs/task-api.postman_collection.json](docs/task-api.postman_collection.json).
+
+**Como importar:**
+
+1. Abra o Postman → **Import** → selecione o arquivo acima.
+2. A collection já inclui uma variável `base_url` apontando para `http://localhost:8000`.
+3. Execute **POST /auth/register** ou **POST /auth/login** — o token JWT é salvo automaticamente na variável `token` via script de teste.
+4. Todas as requisições de tasks já usam `Bearer {{token}}`, então basta chamar normalmente após autenticar.
+
+> Para apontar para outro ambiente, edite `base_url` em **Collection → Variables**.
 
 ## Roadmap
 
-### v0.1.0 — MVP (atual)
+### v0.1.0 — MVP
 
 - [x] Estrutura base do projeto com FastAPI
 - [x] Endpoint `GET /health`
@@ -104,17 +119,19 @@ Documentação interativa: `http://localhost:8000/docs`.
 
 ### v0.2.0 — Autenticação
 
-- [ ] Autenticação com JWT (registro, login e proteção de rotas)
-- [ ] Associação de tarefas ao usuário autenticado
-- [ ] Tratamento de erros padronizado (RFC 7807)
+- [x] Autenticação com JWT (registro, login e proteção de rotas)
+- [x] Associação de tarefas ao usuário autenticado
+- [x] Tratamento de erros padronizado (RFC 7807)
 
-### v0.3.0 — Qualidade
+### v0.3.0 — Qualidade (atual)
 
-- [ ] Cobertura de testes com Pytest + HTTPX
-  - [ ] Testes de endpoints CRUD de tarefas
-  - [ ] Testes de registro e login
-  - [ ] Testes de rotas protegidas (com e sem token)
-- [ ] Paginação na listagem de tarefas
+- [x] Cobertura de testes com Pytest + HTTPX
+  - [x] Testes de endpoints CRUD de tarefas
+  - [x] Testes de registro e login
+  - [x] Testes de rotas protegidas (com e sem token)
+  - [x] Testes de isolamento entre usuários
+  - [x] Testes do formato de erro RFC 7807
+- [x] Paginação na listagem de tarefas (`items`, `total`, `skip`, `limit`)
 
 ### v1.0.0 — Produção
 
