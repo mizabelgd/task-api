@@ -14,6 +14,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 class AuthService:
     def register(self, db: Session, data: UserCreate) -> TokenResponse:
+        """Cria um novo usuário e retorna um JWT. Lança 409 se o e-mail já estiver cadastrado."""
         if _repo.get_by_email(db, data.email):
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
@@ -25,6 +26,7 @@ class AuthService:
         return TokenResponse(access_token=create_access_token(str(user.id)))
 
     def login(self, db: Session, email: str, password: str) -> TokenResponse:
+        """Valida credenciais e retorna um JWT. Lança 401 se e-mail ou senha forem inválidos."""
         user = _repo.get_by_email(db, email)
         if user is None or not verify_password(password, user.hashed_password):
             raise HTTPException(
@@ -38,6 +40,10 @@ class AuthService:
 def get_current_user(
     token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ) -> User:
+    """Dependency do FastAPI que decodifica o Bearer token e retorna o usuário autenticado.
+
+    Lança 401 se o token for inválido, expirado ou o usuário não existir mais.
+    """
     user_id_str = decode_token(token)
     if user_id_str is None:
         raise HTTPException(
