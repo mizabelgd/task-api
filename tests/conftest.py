@@ -12,9 +12,13 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from app.core.limiter import limiter
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
+
+# Desabilita rate limiting para que os testes não sejam bloqueados pelo limite de auth
+limiter.enabled = False
 
 _engine = create_engine(os.environ["DATABASE_URL"])
 _TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=_engine)

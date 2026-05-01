@@ -5,9 +5,11 @@ import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from slowapi.errors import RateLimitExceeded
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.v1.router import router as v1_router
+from app.core.limiter import limiter
 from app.db.base import Base
 from app.db.session import engine
 import app.models.task  # noqa: F401
@@ -20,8 +22,24 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="task-api", version="0.3.0", lifespan=lifespan)
+app = FastAPI(title="task-api", version="1.0.0", lifespan=lifespan)
+app.state.limiter = limiter
 app.include_router(v1_router)
+
+
+@app.exception_handler(RateLimitExceeded)
+async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
+    return JSONResponse(
+        status_code=429,
+        content={
+            "type": "https://httpstatuses.com/429",
+            "title": "Too Many Requests",
+            "status": 429,
+            "detail": f"Rate limit exceeded: {exc.detail}",
+            "instance": request.url.path,
+        },
+        media_type="application/problem+json",
+    )
 
 
 @app.exception_handler(StarletteHTTPException)

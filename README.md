@@ -69,16 +69,41 @@ Documentação interativa: `http://localhost:8000/docs`.
 
 ## Endpoints
 
-| Método | Rota                   | Auth | Descrição                        |
-| ------ | ---------------------- | ---- | -------------------------------- |
-| GET    | `/health`              | —    | Verifica status da API           |
-| POST   | `/api/v1/auth/register`| —    | Cria conta e retorna JWT         |
-| POST   | `/api/v1/auth/login`   | —    | Autentica e retorna JWT          |
-| GET    | `/api/v1/tasks`        | JWT  | Lista tarefas do usuário         |
-| POST   | `/api/v1/tasks`        | JWT  | Cria uma nova tarefa             |
-| GET    | `/api/v1/tasks/{id}`   | JWT  | Retorna uma tarefa pelo ID       |
-| PATCH  | `/api/v1/tasks/{id}`   | JWT  | Atualiza parcialmente uma tarefa |
-| DELETE | `/api/v1/tasks/{id}`   | JWT  | Remove uma tarefa                |
+| Método | Rota                    | Auth | Descrição                        |
+| ------ | ----------------------- | ---- | -------------------------------- |
+| GET    | `/health`               | —    | Verifica status da API           |
+| POST   | `/api/v1/auth/register` | —    | Cria conta e retorna JWT         |
+| POST   | `/api/v1/auth/login`    | —    | Autentica e retorna JWT          |
+| GET    | `/api/v1/tasks`         | JWT  | Lista tarefas do usuário         |
+| POST   | `/api/v1/tasks`         | JWT  | Cria uma nova tarefa             |
+| GET    | `/api/v1/tasks/{id}`    | JWT  | Retorna uma tarefa pelo ID       |
+| PATCH  | `/api/v1/tasks/{id}`    | JWT  | Atualiza parcialmente uma tarefa |
+| DELETE | `/api/v1/tasks/{id}`    | JWT  | Remove uma tarefa                |
+
+## Docker
+
+Para subir a API e o banco com um único comando:
+
+```bash
+cp .env.example .env   # ajuste SECRET_KEY antes de subir
+make up                # docker compose up -d --build
+make logs              # acompanhar logs da API
+make down              # parar e remover containers
+```
+
+> O `docker-compose.yml` já configura `DATABASE_URL` apontando para o serviço `db` interno.
+
+## Makefile
+
+| Comando       | Descrição                          |
+| ------------- | ---------------------------------- |
+| `make install`| Instala dependências (`uv sync`)   |
+| `make dev`    | Sobe a API em modo reload          |
+| `make test`   | Executa os testes                  |
+| `make build`  | Builda a imagem Docker             |
+| `make up`     | Sobe os containers em background   |
+| `make down`   | Para e remove os containers        |
+| `make logs`   | Exibe logs da API em tempo real    |
 
 ## Postman
 
@@ -123,7 +148,7 @@ A collection está em [docs/task-api.postman_collection.json](docs/task-api.post
 - [x] Associação de tarefas ao usuário autenticado
 - [x] Tratamento de erros padronizado (RFC 7807)
 
-### v0.3.0 — Qualidade (atual)
+### v0.3.0 — Qualidade
 
 - [x] Cobertura de testes com Pytest + HTTPX
   - [x] Testes de endpoints CRUD de tarefas
@@ -133,8 +158,8 @@ A collection está em [docs/task-api.postman_collection.json](docs/task-api.post
   - [x] Testes do formato de erro RFC 7807
 - [x] Paginação na listagem de tarefas (`items`, `total`, `skip`, `limit`)
 
-### v1.0.0 — Produção
+### v1.0.0 — Produção (atual)
 
-- [ ] Rate limiting
-- [ ] Deploy containerizado com Docker
-- [ ] Criar Makefile
+- [x] Rate limiting nos endpoints de autenticação (10 req/min via slowapi)
+- [x] Deploy containerizado com Docker (`Dockerfile` + `docker-compose.yml`)
+- [x] Makefile com atalhos para dev, testes e Docker
