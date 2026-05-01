@@ -15,6 +15,18 @@
       "value": "",
       "type": "string",
       "description": "Preenchido automaticamente após register ou login."
+    },
+    {
+      "key": "test_email",
+      "value": "usuario@exemplo.com",
+      "type": "string",
+      "description": "E-mail usado em register e login. Altere aqui para mudar nos dois lugares."
+    },
+    {
+      "key": "test_password",
+      "value": "senha123",
+      "type": "string",
+      "description": "Senha usada em register e login."
     }
   ],
   "item": [
@@ -60,7 +72,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"usuario@exemplo.com\",\n  \"password\": \"senha123\"\n}",
+              "raw": "{\n  \"email\": \"{{test_email}}\",\n  \"password\": \"{{test_password}}\"\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -73,6 +85,21 @@
         {
           "name": "POST /auth/login",
           "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Garante que as variáveis de credenciais estão definidas.",
+                  "// Se não estiver, rode POST /auth/register primeiro.",
+                  "var email = pm.collectionVariables.get('test_email');",
+                  "var pwd   = pm.collectionVariables.get('test_password');",
+                  "if (!email || !pwd) {",
+                  "    throw new Error('Defina test_email e test_password nas variáveis da collection antes de fazer login.');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
             {
               "listen": "test",
               "script": {
@@ -88,14 +115,12 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/x-www-form-urlencoded" }
-            ],
+            "header": [],
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                { "key": "username", "value": "usuario@exemplo.com" },
-                { "key": "password", "value": "senha123" }
+                { "key": "username", "value": "{{test_email}}" },
+                { "key": "password", "value": "{{test_password}}" }
               ]
             },
             "url": {
