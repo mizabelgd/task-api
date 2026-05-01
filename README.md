@@ -6,6 +6,21 @@ Micro-API RESTful para gestão de tarefas, desenvolvida como MVP para a discipli
 
 Fornecer uma API simples e extensível para criação, leitura, atualização e remoção de tarefas (CRUD), servindo como base para estudos de arquitetura de APIs com boas práticas de desenvolvimento.
 
+## Claude Code
+
+Este projeto foi desenvolvido com o auxílio do [Claude Code](https://claude.ai/code), o agente de engenharia de software da Anthropic, integrado ao VS Code e utilizado diretamente no terminal — com revisão e direcionamento da desenvolvedora em cada etapa.
+
+O agente foi usado ao longo de todas as versões:
+
+- **Planejamento** — definição e refinamento do roadmap (v0.1.0 → v1.0.0) em conversas iterativas.
+- **Geração de código** — criação e modificação de models, schemas, repositories, services e endpoints, sempre respeitando a arquitetura em camadas e o contexto existente.
+- **Autenticação JWT** — implementação do fluxo de registro, login e proteção de rotas com `bcrypt` e `PyJWT`.
+- **Testes** — criação da suíte Pytest com fixtures de banco isolado, cobertura de CRUD, autenticação, isolamento entre usuários e validação do formato RFC 7807.
+- **Infraestrutura** — geração de `Dockerfile`, `docker-compose.yml`, `Makefile` e collection Postman.
+- **Versionamento** — mensagens de commit no padrão convencional executadas ao final de cada versão.
+
+> Em cada ciclo, o agente lia o estado atual do projeto, propunha as mudanças, executava, rodava os testes e fazia o commit — atuando como par de programação orientado por contexto e sob revisão contínua.
+
 ## Stack
 
 | Camada                 | Tecnologia            |
