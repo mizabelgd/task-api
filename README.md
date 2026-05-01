@@ -28,6 +28,7 @@ O agente foi usado ao longo de todas as versões:
 | Linguagem              | Python 3.13+          |
 | Framework              | FastAPI               |
 | Validação              | Pydantic v2           |
+| Autenticação           | PyJWT + bcrypt        |
 | Banco de dados         | PostgreSQL            |
 | ORM                    | SQLAlchemy + psycopg2 |
 | Servidor               | Uvicorn               |
@@ -36,20 +37,19 @@ O agente foi usado ao longo de todas as versões:
 
 ## Arquitetura
 
-O backend segue uma arquitetura em três camadas:
+O backend segue uma arquitetura em três camadas, com dois domínios independentes:
 
 ```
 Cliente
   │  HTTP/JSON (REST)
   ▼
-TaskController  — recebe requisições e delega ao service
+FastAPI Router
+  ├── /auth  ──▶ AuthController ──▶ AuthService  ──▶ UserRepository ──▶ PostgreSQL
+  │                                      │
+  │                               security (JWT + bcrypt)
   │
-TaskService     — implementa a lógica de negócio
-  │
-TaskRepository  — gerencia queries SQL contra o PostgreSQL
-  │  SQL (psycopg2 / SQLAlchemy)
-  ▼
-PostgreSQL
+  └── /tasks ──▶ TaskController ──▶ TaskService  ──▶ TaskRepository ──▶ PostgreSQL
+                  (exige JWT)
 ```
 
 Diagrama de componentes completo: [docs/architecture.md](docs/architecture.md).
@@ -73,7 +73,10 @@ uv sync
 
 # 4. Configure as variáveis de ambiente
 cp .env.example .env
-# Edite .env com suas credenciais do PostgreSQL
+# Edite .env com suas credenciais:
+#   DATABASE_URL      → string de conexão PostgreSQL
+#   SECRET_KEY        → chave secreta para assinar os JWTs
+#   TEST_DATABASE_URL → banco isolado usado nos testes (opcional)
 
 # 5. Rode a API (as tabelas são criadas automaticamente no startup)
 uvicorn app.main:app --reload
